@@ -76,3 +76,94 @@ BEGIN
 
  END
  GO
+ 
+ 
+ 
+ 
+ 
+ -------------------------------------------------------------AFTER MODIFICATION-------------------------------------------------------------------------------------
+ 
+ 
+ 
+ 
+ USE [SGX_TEST]
+GO
+
+/****** Object:  StoredProcedure [DBLOG].[Usp_Insert_FA_Journal_Update_Log]    Script Date: 1/9/2023 12:58:02 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- =============================================
+-- Author:		<Rahul,,Mall>
+-- Create date: <09/01/2023>
+-- Description: Insert Journal  voucher updated details.
+-- =============================================
+CREATE PROC [DBLOG].[Usp_Insert_FA_Journal_Update_Log]
+@ErrorMsg Varchar(200) Output,
+@JV_LogId		       numeric(18, 0) Output,
+@Jid				   numeric(18, 0) ,
+@Jno				   varchar(20) ,  
+@JRequest			   int  ,  
+@Prev_JDate		       datetime ,  
+@New_Jdate			   datetime  , 
+@Prev_JMemo		       varchar(250) , 
+@New_JMemo			   varchar(250),
+@JSlNo                 int ,
+@Prev_JAcccode         numeric(12, 0),
+@New_JAcccode          numeric(12, 0),
+@Reason                varchar(250),
+@JV_UpdateBy           varchar(7)
+AS
+BEGIN
+
+   INSERT INTO [DBLOG].[FA_Tbl_Journal_Update_Log]
+    (     
+		[Jid]
+		,[Jno]
+		,[JRequest]
+		,[Prev_JDate]
+		,[New_Jdate]
+		,[Prev_JMemo]
+		,[New_JMemo]
+		,[JSlNo]
+		,[Prev_JAcccode]
+		,[New_JAcccode]
+		,[Reason]
+		,[JV_UpdateBy]
+     )
+     VALUES
+     (
+		@Jid,
+		@Jno,
+		@JRequest,
+		@Prev_JDate,
+		@New_Jdate,
+		@Prev_JMemo,
+		@New_JMemo,
+		@JSlNo,
+		@Prev_JAcccode ,
+		@New_JAcccode,
+		@Reason,
+		@JV_UpdateBy
+     )   
+
+	SET  @JV_LogId=(Select SCOPE_IDENTITY())
+	SET @ErrorMsg=''
+
+	IF(@@ERROR<>0)
+	Begin
+	    SET @JV_LogId =-1;
+		SET @ErrorMsg='Database Error Occured while insertion in table DBLOG.FA_Tbl_Journal_Update_Log !!'
+	End
+
+ END
+
+
+GO
+
+
+
